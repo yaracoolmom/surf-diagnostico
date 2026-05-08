@@ -32,8 +32,8 @@ export const step2Schema = z.object({
   edad_hijo: z.coerce
     .number()
     .int()
-    .min(10, 'La edad debe ser entre 10 y 25 años')
-    .max(25, 'La edad debe ser entre 10 y 25 años'),
+    .min(1, 'Ingresa una edad válida')
+    .max(99, 'Ingresa una edad válida'),
   cumple_hijo: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'Ingresa una fecha válida'),

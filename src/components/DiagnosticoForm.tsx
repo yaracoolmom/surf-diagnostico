@@ -58,8 +58,8 @@ function validateStep(step: number, data: FormData): Errors {
   if (step === 2) {
     if (!data.nombre_hijo || data.nombre_hijo.trim().length < 2)
       errors.nombre_hijo = 'Ingresa el nombre de tu hijo/a'
-    if (!data.edad_hijo || Number(data.edad_hijo) < 10 || Number(data.edad_hijo) > 25)
-      errors.edad_hijo = 'La edad debe ser entre 10 y 25 años'
+    if (!data.edad_hijo || Number(data.edad_hijo) < 1 || Number(data.edad_hijo) > 99)
+      errors.edad_hijo = 'Ingresa una edad válida'
     if (!data.cumple_hijo)
       errors.cumple_hijo = 'Ingresa la fecha de cumpleaños'
     if (!data.genero_hijo)
@@ -148,7 +148,11 @@ export default function DiagnosticoForm() {
         sessionStorage.setItem(`resultado-${json.id}`, JSON.stringify(json.record))
       }
 
-      router.push(`/resultado/${json.id}`)
+      if (json.fuera_de_rango) {
+        router.push(`/resultado/${json.id}?fuera_de_rango=1`)
+      } else {
+        router.push(`/resultado/${json.id}`)
+      }
     } catch {
       setSubmitError('No pudimos conectarnos. Verifica tu conexión e intenta de nuevo.')
     } finally {

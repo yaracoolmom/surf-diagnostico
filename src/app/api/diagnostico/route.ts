@@ -20,6 +20,56 @@ export async function POST(req: NextRequest) {
 
     const data = parsed.data
 
+    // Detectar si la edad está fuera del rango del diagnóstico
+    const edadFueraDeRango = data.edad_hijo < 10 || data.edad_hijo > 18
+
+    if (edadFueraDeRango) {
+      const record = {
+        nombre_adulto: data.nombre_adulto,
+        nombre_hijo: data.nombre_hijo,
+        edad_hijo: data.edad_hijo,
+        fuera_de_rango: true,
+      }
+
+      // Guardar igualmente si Supabase está configurado
+      if (supabaseConfigured) {
+        const { createServerClient } = await import('@/lib/supabase-server')
+        const supabase = createServerClient()
+        await supabase.from('diagnosticos_surf').insert({
+          nombre_adulto: data.nombre_adulto,
+          email: data.email,
+          whatsapp: data.whatsapp,
+          rol: data.rol,
+          cumple_adulto: data.cumple_adulto,
+          nombre_hijo: data.nombre_hijo,
+          edad_hijo: data.edad_hijo,
+          cumple_hijo: data.cumple_hijo,
+          genero_hijo: data.genero_hijo,
+          principal_preocupacion: data.principal_preocupacion,
+          acepta_contacto: data.acepta_contacto,
+          q_cierre: data.q_cierre,
+          q_discusion_limites: data.q_discusion_limites,
+          q_consecuencias: data.q_consecuencias,
+          q_reparacion: data.q_reparacion,
+          q_culpa_cansancio: data.q_culpa_cansancio,
+          q_comunicacion_emocional: data.q_comunicacion_emocional,
+          q_acuerdos: data.q_acuerdos,
+          q_rechazo: data.q_rechazo,
+          q_miedo_perder_vinculo: data.q_miedo_perder_vinculo,
+          q_sin_ruta: data.q_sin_ruta,
+          promedio_total: 0,
+          ola_principal: 'Fuera de rango',
+          fase_surf: 'N/A',
+          resultado_visible: { ola_principal: 'Fuera de rango', explicacion: '', fase_surf: '', reto: '', frase_puente: '' },
+          prioridad_comercial: 'Alta',
+          nota_interna: `Edad fuera de rango: ${data.edad_hijo} años. Contactar directamente.`,
+        })
+      }
+
+      const demoId = `demo-${Date.now()}`
+      return NextResponse.json({ id: demoId, record, fuera_de_rango: true }, { status: 201 })
+    }
+
     const { resultado_visible, promedio_total, prioridad_comercial } = calcularResultado(
       {
         q_cierre: data.q_cierre,

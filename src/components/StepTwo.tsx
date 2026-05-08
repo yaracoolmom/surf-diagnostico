@@ -56,8 +56,8 @@ export default function StepTwo({ data, errors, onChange }: StepTwoProps) {
           className="input-field"
           placeholder="Edad en años"
           value={data.edad_hijo || ''}
-          min={10}
-          max={25}
+          min={1}
+          max={99}
           onChange={(e) => onChange('edad_hijo', e.target.value)}
         />
         {errors.edad_hijo && <p className="error-msg">{errors.edad_hijo}</p>}

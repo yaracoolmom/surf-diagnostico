@@ -78,9 +78,19 @@ export default function ResultadoPage() {
   const [record, setRecord] = useState<ResultRecord | null>(null)
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
+  const [fueraDeRango, setFueraDeRango] = useState(false)
 
   useEffect(() => {
     async function load() {
+      const urlParams = new URLSearchParams(window.location.search)
+      if (urlParams.get('fuera_de_rango') === '1') {
+        const cached = sessionStorage.getItem(`resultado-${id}`)
+        if (cached) setRecord(JSON.parse(cached))
+        setFueraDeRango(true)
+        setLoading(false)
+        return
+      }
+
       const cached = sessionStorage.getItem(`resultado-${id}`)
       if (cached) {
         setRecord(JSON.parse(cached))
@@ -115,6 +125,63 @@ export default function ResultadoPage() {
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-2 border-[#50c4c6] border-t-transparent rounded-full animate-spin" />
           <p className="text-sm text-gray-400">Cargando tu resultado...</p>
+        </div>
+      </main>
+    )
+  }
+
+  if (fueraDeRango) {
+    const nombre = record?.nombre_adulto ?? ''
+    const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? ''
+    const whatsappMessage = encodeURIComponent(
+      'Hola Yara, hice el diagnóstico SURF y me dijeron que mi caso puede requerir orientación directa. Me gustaría hablar contigo.'
+    )
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`
+
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-[#e8f9f9] via-white to-[#f0fafa] flex items-center justify-center px-4">
+        <div className="max-w-md w-full mx-auto text-center">
+          <div className="text-center mb-8">
+            <Link href="/" className="inline-flex items-center gap-2">
+              <span className="text-2xl font-bold text-[#50c4c6]">SURF</span>
+              <span className="text-sm text-gray-400">Diagnóstico Familiar</span>
+            </Link>
+          </div>
+
+          <div className="card">
+            <div className="w-16 h-16 rounded-full bg-[#e8f9f9] flex items-center justify-center mx-auto mb-5 text-3xl">
+              🌊
+            </div>
+
+            {nombre && (
+              <p className="text-gray-500 text-sm mb-2">Hola, <span className="font-medium text-gray-700">{nombre}</span></p>
+            )}
+
+            <h2 className="text-xl font-bold text-gray-800 mb-4 leading-snug">
+              Este diagnóstico está diseñado para acompañar a padres de adolescentes entre 10 y 18 años
+            </h2>
+
+            <p className="text-sm text-gray-500 leading-relaxed mb-6">
+              Tu situación puede requerir una mirada diferente. Tus datos quedaron guardados y me pondré en contacto contigo. Si prefieres hablar ahora, puedes escribirme directamente.
+            </p>
+
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block bg-[#25D366] hover:bg-[#1ebe5a] text-white font-semibold px-8 py-3.5 rounded-full transition-all duration-200 shadow-md hover:shadow-lg w-full"
+            >
+              💬 Escríbeme por WhatsApp
+            </a>
+
+            <p className="text-xs text-gray-400 mt-5 leading-relaxed">
+              Esta herramienta es una orientación inicial y no reemplaza acompañamiento psicológico, terapéutico, médico o legal.
+            </p>
+          </div>
+
+          <div className="text-center mt-6">
+            <Link href="/" className="text-sm text-[#50c4c6] hover:underline">← Volver al inicio</Link>
+          </div>
         </div>
       </main>
     )
