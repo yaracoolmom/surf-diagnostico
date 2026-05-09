@@ -49,8 +49,17 @@ function validateStep(step: number, data: FormData): Errors {
       errors.whatsapp = 'Ingresa tu número de WhatsApp'
     if (!data.rol)
       errors.rol = 'Selecciona tu rol'
-    if (!data.cumple_adulto)
+    if (!data.cumple_adulto) {
       errors.cumple_adulto = 'Ingresa tu fecha de cumpleaños'
+    } else {
+      const today = new Date()
+      const adultBirth = new Date(data.cumple_adulto)
+      const adultAge = (today.getTime() - adultBirth.getTime()) / (365.25 * 24 * 60 * 60 * 1000)
+      if (adultAge < 18)
+        errors.cumple_adulto = 'Debes tener al menos 18 años para usar esta herramienta'
+      else if (adultAge > 100)
+        errors.cumple_adulto = 'Verifica tu fecha de nacimiento'
+    }
     if (!data.acepta_contacto)
       errors.acepta_contacto = 'Debes aceptar para continuar'
   }
@@ -60,8 +69,24 @@ function validateStep(step: number, data: FormData): Errors {
       errors.nombre_hijo = 'Ingresa el nombre de tu hijo/a'
     if (!data.edad_hijo || Number(data.edad_hijo) < 1 || Number(data.edad_hijo) > 99)
       errors.edad_hijo = 'Ingresa una edad válida'
-    if (!data.cumple_hijo)
+    if (!data.cumple_hijo) {
       errors.cumple_hijo = 'Ingresa la fecha de cumpleaños'
+    } else {
+      const today = new Date()
+      const childBirth = new Date(data.cumple_hijo)
+      const ageFromBirth = (today.getTime() - childBirth.getTime()) / (365.25 * 24 * 60 * 60 * 1000)
+      const statedAge = Number(data.edad_hijo)
+      if (childBirth > today) {
+        errors.cumple_hijo = 'La fecha de nacimiento no puede ser en el futuro'
+      } else if (statedAge && Math.abs(ageFromBirth - statedAge) > 1) {
+        errors.cumple_hijo = 'La fecha de nacimiento no coincide con la edad ingresada'
+      } else if (data.cumple_adulto) {
+        const adultBirth = new Date(data.cumple_adulto)
+        const diffYears = (childBirth.getTime() - adultBirth.getTime()) / (365.25 * 24 * 60 * 60 * 1000)
+        if (diffYears < 14)
+          errors.cumple_hijo = 'Verifica las fechas: la diferencia de edad entre tú y tu hijo/a parece incorrecta'
+      }
+    }
     if (!data.genero_hijo)
       errors.genero_hijo = 'Selecciona una opción'
     if (!data.principal_preocupacion)
