@@ -67,8 +67,6 @@ function validateStep(step: number, data: FormData): Errors {
   if (step === 2) {
     if (!data.nombre_hijo || data.nombre_hijo.trim().length < 2)
       errors.nombre_hijo = 'Ingresa el nombre de tu hijo/a'
-    if (!data.edad_hijo || Number(data.edad_hijo) < 1 || Number(data.edad_hijo) > 99)
-      errors.edad_hijo = 'Ingresa una edad válida'
     if (!data.cumple_hijo) {
       errors.cumple_hijo = 'Ingresa la fecha de cumpleaños'
     } else {
@@ -118,7 +116,16 @@ export default function DiagnosticoForm() {
   const [submitError, setSubmitError] = useState<string | null>(null)
 
   function updateField(field: keyof FormData, value: string | number | boolean) {
-    setFormData((prev) => ({ ...prev, [field]: value }))
+    if (field === 'cumple_hijo' && typeof value === 'string') {
+      const birth = new Date(value)
+      const today = new Date()
+      const age = birth < today
+        ? Math.floor((today.getTime() - birth.getTime()) / (365.25 * 24 * 60 * 60 * 1000))
+        : 0
+      setFormData((prev) => ({ ...prev, cumple_hijo: value, edad_hijo: age > 0 ? String(age) : '' }))
+    } else {
+      setFormData((prev) => ({ ...prev, [field]: value }))
+    }
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }))
     }

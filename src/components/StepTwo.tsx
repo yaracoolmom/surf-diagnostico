@@ -6,6 +6,15 @@ interface StepTwoProps {
   onChange: (field: keyof FormData, value: string | number) => void
 }
 
+function calcularEdad(fechaNacimiento: string): number | null {
+  if (!fechaNacimiento) return null
+  const today = new Date()
+  const birth = new Date(fechaNacimiento)
+  if (birth > today) return null
+  const age = Math.floor((today.getTime() - birth.getTime()) / (365.25 * 24 * 60 * 60 * 1000))
+  return age > 0 ? age : null
+}
+
 const GENERO_OPTIONS = ['Hija', 'Hijo', 'Prefiero no decirlo', 'Otro']
 const PREOCUPACION_OPTIONS = [
   'Peleas frecuentes',
@@ -45,28 +54,10 @@ export default function StepTwo({ data, errors, onChange }: StepTwoProps) {
         {errors.nombre_hijo && <p className="error-msg">{errors.nombre_hijo}</p>}
       </div>
 
-      {/* Edad */}
-      <div>
-        <label className="label" htmlFor="edad_hijo">
-          Edad <span className="text-[#50c4c6]">*</span>
-        </label>
-        <input
-          id="edad_hijo"
-          type="number"
-          className="input-field"
-          placeholder="Edad en años"
-          value={data.edad_hijo || ''}
-          min={1}
-          max={99}
-          onChange={(e) => onChange('edad_hijo', e.target.value)}
-        />
-        {errors.edad_hijo && <p className="error-msg">{errors.edad_hijo}</p>}
-      </div>
-
       {/* Cumpleaños hijo */}
       <div>
         <label className="label" htmlFor="cumple_hijo">
-          Fecha de cumpleaños <span className="text-[#50c4c6]">*</span>
+          Fecha de nacimiento <span className="text-[#50c4c6]">*</span>
         </label>
         <input
           id="cumple_hijo"
@@ -76,6 +67,14 @@ export default function StepTwo({ data, errors, onChange }: StepTwoProps) {
           onChange={(e) => onChange('cumple_hijo', e.target.value)}
           max={new Date().toISOString().split('T')[0]}
         />
+        {data.cumple_hijo && !errors.cumple_hijo && (() => {
+          const edad = calcularEdad(data.cumple_hijo)
+          return edad !== null ? (
+            <p className="text-sm text-[#50c4c6] mt-1.5 font-medium">
+              ✓ {edad} {edad === 1 ? 'año' : 'años'}
+            </p>
+          ) : null
+        })()}
         {errors.cumple_hijo && <p className="error-msg">{errors.cumple_hijo}</p>}
       </div>
 
