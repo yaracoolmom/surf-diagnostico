@@ -158,7 +158,7 @@ export default function ResultadoPage() {
             )}
 
             <h2 className="text-xl font-bold text-gray-800 mb-4 leading-snug">
-              Este diagnóstico está diseñado para acompañar a padres de adolescentes entre 10 y 18 años
+              Este diagnóstico está diseñado para acompañar a padres de jóvenes entre 10 y 25 años
             </h2>
 
             <p className="text-sm text-gray-500 leading-relaxed mb-6">

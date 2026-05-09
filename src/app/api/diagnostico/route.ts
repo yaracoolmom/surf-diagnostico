@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     const data = parsed.data
 
     // Detectar si la edad está fuera del rango del diagnóstico
-    const edadFueraDeRango = data.edad_hijo < 10 || data.edad_hijo > 18
+    const edadFueraDeRango = data.edad_hijo < 10 || data.edad_hijo > 25
 
     if (edadFueraDeRango) {
       const record = {
