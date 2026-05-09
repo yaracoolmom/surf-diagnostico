@@ -55,8 +55,13 @@ function validateStep(step: number, data: FormData): Errors {
       const today = new Date()
       const adultBirth = new Date(data.cumple_adulto)
       const adultAge = (today.getTime() - adultBirth.getTime()) / (365.25 * 24 * 60 * 60 * 1000)
-      if (adultAge < 18)
-        errors.cumple_adulto = 'Debes tener al menos 18 años para usar esta herramienta'
+      const esFamiliarOOtro = data.rol === 'Familiar' || data.rol === 'Otro'
+      const edadMinima = esFamiliarOOtro ? 14 : 18
+      const mensajeEdad = esFamiliarOOtro
+        ? 'Debes tener al menos 14 años para usar esta herramienta'
+        : 'Debes tener al menos 18 años para usar esta herramienta'
+      if (adultAge < edadMinima)
+        errors.cumple_adulto = mensajeEdad
       else if (adultAge > 100)
         errors.cumple_adulto = 'Verifica tu fecha de nacimiento'
     }
@@ -79,10 +84,13 @@ function validateStep(step: number, data: FormData): Errors {
       } else if (statedAge && Math.abs(ageFromBirth - statedAge) > 1) {
         errors.cumple_hijo = 'La fecha de nacimiento no coincide con la edad ingresada'
       } else if (data.cumple_adulto) {
-        const adultBirth = new Date(data.cumple_adulto)
-        const diffYears = (childBirth.getTime() - adultBirth.getTime()) / (365.25 * 24 * 60 * 60 * 1000)
-        if (diffYears < 14)
-          errors.cumple_hijo = 'Verifica las fechas: la diferencia de edad entre tú y tu hijo/a parece incorrecta'
+        const esFamiliarOOtro = data.rol === 'Familiar' || data.rol === 'Otro'
+        if (!esFamiliarOOtro) {
+          const adultBirth = new Date(data.cumple_adulto)
+          const diffYears = (childBirth.getTime() - adultBirth.getTime()) / (365.25 * 24 * 60 * 60 * 1000)
+          if (diffYears < 14)
+            errors.cumple_hijo = 'Verifica las fechas: la diferencia de edad entre tú y tu hijo/a parece incorrecta'
+        }
       }
     }
     if (!data.genero_hijo)

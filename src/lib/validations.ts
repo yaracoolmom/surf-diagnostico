@@ -80,23 +80,22 @@ export const fullFormSchema = step1Schema.merge(step2Schema).merge(step3Schema).
   const adultBirth = new Date(data.cumple_adulto)
   const childBirth = new Date(data.cumple_hijo)
 
+  const esFamiliarOOtro = data.rol === 'Familiar' || data.rol === 'Otro'
   const adultAge = (today.getTime() - adultBirth.getTime()) / (365.25 * 24 * 60 * 60 * 1000)
-  if (adultAge < 18) {
-    ctx.addIssue({ code: 'custom', path: ['cumple_adulto'], message: 'Debes tener al menos 18 años' })
+  const edadMinima = esFamiliarOOtro ? 14 : 18
+  if (adultAge < edadMinima) {
+    ctx.addIssue({ code: 'custom', path: ['cumple_adulto'], message: `Debes tener al menos ${edadMinima} años` })
   }
 
   if (childBirth > today) {
     ctx.addIssue({ code: 'custom', path: ['cumple_hijo'], message: 'La fecha de nacimiento no puede ser en el futuro' })
   }
 
-  const ageFromBirth = (today.getTime() - childBirth.getTime()) / (365.25 * 24 * 60 * 60 * 1000)
-  if (Math.abs(ageFromBirth - data.edad_hijo) > 1) {
-    ctx.addIssue({ code: 'custom', path: ['cumple_hijo'], message: 'La fecha de nacimiento no coincide con la edad ingresada' })
-  }
-
-  const diffYears = (childBirth.getTime() - adultBirth.getTime()) / (365.25 * 24 * 60 * 60 * 1000)
-  if (diffYears < 14) {
-    ctx.addIssue({ code: 'custom', path: ['cumple_hijo'], message: 'La diferencia de edad entre adulto e hijo/a parece incorrecta' })
+  if (!esFamiliarOOtro) {
+    const diffYears = (childBirth.getTime() - adultBirth.getTime()) / (365.25 * 24 * 60 * 60 * 1000)
+    if (diffYears < 14) {
+      ctx.addIssue({ code: 'custom', path: ['cumple_hijo'], message: 'La diferencia de edad entre adulto e hijo/a parece incorrecta' })
+    }
   }
 })
 
