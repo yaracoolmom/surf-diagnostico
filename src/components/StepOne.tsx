@@ -8,6 +8,31 @@ interface StepOneProps {
 
 const ROL_OPTIONS = ['Mamá', 'Papá', 'Cuidador/a', 'Familiar', 'Otro']
 
+export const PAISES = [
+  { flag: '🇨🇴', name: 'Colombia',          code: '+57',  digits: 10 },
+  { flag: '🇲🇽', name: 'México',             code: '+52',  digits: 10 },
+  { flag: '🇦🇷', name: 'Argentina',          code: '+54',  digits: 10 },
+  { flag: '🇪🇸', name: 'España',             code: '+34',  digits: 9  },
+  { flag: '🇨🇱', name: 'Chile',              code: '+56',  digits: 9  },
+  { flag: '🇻🇪', name: 'Venezuela',          code: '+58',  digits: 10 },
+  { flag: '🇵🇪', name: 'Perú',              code: '+51',  digits: 9  },
+  { flag: '🇪🇨', name: 'Ecuador',            code: '+593', digits: 9  },
+  { flag: '🇧🇴', name: 'Bolivia',            code: '+591', digits: 8  },
+  { flag: '🇵🇾', name: 'Paraguay',           code: '+595', digits: 9  },
+  { flag: '🇺🇾', name: 'Uruguay',            code: '+598', digits: 8  },
+  { flag: '🇬🇹', name: 'Guatemala',          code: '+502', digits: 8  },
+  { flag: '🇨🇷', name: 'Costa Rica',         code: '+506', digits: 8  },
+  { flag: '🇵🇦', name: 'Panamá',            code: '+507', digits: 8  },
+  { flag: '🇭🇳', name: 'Honduras',           code: '+504', digits: 8  },
+  { flag: '🇸🇻', name: 'El Salvador',        code: '+503', digits: 8  },
+  { flag: '🇳🇮', name: 'Nicaragua',          code: '+505', digits: 8  },
+  { flag: '🇩🇴', name: 'Rep. Dominicana',    code: '+1809',digits: 10 },
+  { flag: '🇵🇷', name: 'Puerto Rico',        code: '+1787',digits: 10 },
+  { flag: '🇺🇸', name: 'USA / Canadá',       code: '+1',   digits: 10 },
+  { flag: '🇧🇷', name: 'Brasil',             code: '+55',  digits: 11 },
+  { flag: '🇵🇹', name: 'Portugal',           code: '+351', digits: 9  },
+]
+
 export default function StepOne({ data, errors, onChange }: StepOneProps) {
   return (
     <div className="space-y-5">
@@ -57,15 +82,43 @@ export default function StepOne({ data, errors, onChange }: StepOneProps) {
         <label className="label" htmlFor="whatsapp">
           WhatsApp <span className="text-[#50c4c6]">*</span>
         </label>
-        <input
-          id="whatsapp"
-          type="tel"
-          className="input-field"
-          placeholder="+57 300 000 0000"
-          value={data.whatsapp}
-          onChange={(e) => onChange('whatsapp', e.target.value)}
-          autoComplete="tel"
-        />
+        <div className="flex gap-2">
+          <select
+            className="input-field w-auto pr-2 shrink-0"
+            value={data.whatsapp_codigo}
+            onChange={(e) => onChange('whatsapp_codigo', e.target.value)}
+            aria-label="País"
+          >
+            {PAISES.map((p) => (
+              <option key={p.code + p.name} value={p.code}>
+                {p.flag} {p.code}
+              </option>
+            ))}
+          </select>
+          <input
+            id="whatsapp"
+            type="tel"
+            className="input-field flex-1"
+            placeholder={(() => {
+              const pais = PAISES.find((p) => p.code === data.whatsapp_codigo)
+              return '0'.repeat(pais?.digits ?? 10)
+            })()}
+            value={data.whatsapp}
+            onChange={(e) => onChange('whatsapp', e.target.value.replace(/\D/g, ''))}
+            autoComplete="tel-national"
+            inputMode="numeric"
+          />
+        </div>
+        {(() => {
+          const pais = PAISES.find((p) => p.code === data.whatsapp_codigo)
+          if (pais && data.whatsapp && !errors.whatsapp) {
+            const digits = data.whatsapp.replace(/\D/g, '').length
+            if (digits === pais.digits) {
+              return <p className="text-sm text-[#50c4c6] mt-1.5 font-medium">✓ Número válido para {pais.name}</p>
+            }
+          }
+          return null
+        })()}
         {errors.whatsapp && <p className="error-msg">{errors.whatsapp}</p>}
       </div>
 

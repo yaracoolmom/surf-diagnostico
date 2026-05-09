@@ -2,6 +2,7 @@ export interface FormData {
   nombre_adulto: string
   email: string
   whatsapp: string
+  whatsapp_codigo: string
   rol: string
   cumple_adulto: string
   acepta_contacto: boolean

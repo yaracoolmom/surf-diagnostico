@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { FormData } from '@/types'
 import ProgressBar from './ProgressBar'
-import StepOne from './StepOne'
+import StepOne, { PAISES } from './StepOne'
 import StepTwo from './StepTwo'
 import StepThree from './StepThree'
 import StepFour from './StepFour'
@@ -15,6 +15,7 @@ const INITIAL_DATA: FormData = {
   nombre_adulto: '',
   email: '',
   whatsapp: '',
+  whatsapp_codigo: '+57',
   rol: '',
   cumple_adulto: '',
   acepta_contacto: false,
@@ -45,8 +46,14 @@ function validateStep(step: number, data: FormData): Errors {
       errors.nombre_adulto = 'Ingresa tu nombre'
     if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email))
       errors.email = 'Ingresa un correo válido'
-    if (!data.whatsapp || data.whatsapp.trim().length < 7)
+    if (!data.whatsapp) {
       errors.whatsapp = 'Ingresa tu número de WhatsApp'
+    } else {
+      const pais = PAISES.find((p) => p.code === data.whatsapp_codigo)
+      const digits = data.whatsapp.replace(/\D/g, '').length
+      if (pais && digits !== pais.digits)
+        errors.whatsapp = `El número debe tener ${pais.digits} dígitos para ${pais.name}`
+    }
     if (!data.rol)
       errors.rol = 'Selecciona tu rol'
     if (!data.cumple_adulto) {
@@ -166,6 +173,7 @@ export default function DiagnosticoForm() {
       const payload = {
         ...formData,
         edad_hijo: Number(formData.edad_hijo),
+        whatsapp: formData.whatsapp_codigo + formData.whatsapp,
       }
 
       const res = await fetch('/api/diagnostico', {
