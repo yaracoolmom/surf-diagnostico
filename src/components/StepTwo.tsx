@@ -24,6 +24,7 @@ const PREOCUPACION_OPTIONS = [
   'Rebeldía o desafío',
   'Baja autoestima',
   'Ansiedad, tristeza o aislamiento',
+  'Apatía o falta de motivación',
   'Estudio y responsabilidad',
   'Otro',
 ]

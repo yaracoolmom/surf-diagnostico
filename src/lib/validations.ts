@@ -49,6 +49,7 @@ export const step2Schema = z.object({
       'Rebeldía o desafío',
       'Baja autoestima',
       'Ansiedad, tristeza o aislamiento',
+      'Apatía o falta de motivación',
       'Estudio y responsabilidad',
       'Otro',
     ],

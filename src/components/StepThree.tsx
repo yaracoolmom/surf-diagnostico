@@ -136,19 +136,19 @@ export default function StepThree({ data, errors, onChange }: StepThreeProps) {
     <div className="space-y-4">
       <div>
         <h2 className="text-xl font-bold text-gray-800 mb-1">Diagnóstico relacional</h2>
-        <p className="text-sm text-gray-500">
-          Responde con sinceridad. No hay respuestas correctas o incorrectas.
+        <p className="text-sm text-gray-500 mb-3">
+          Lee cada situación y marca con qué frecuencia ocurre en tu caso.
         </p>
-        <div className="mt-2 flex items-center gap-4 text-xs text-gray-400">
-          <span>
-            <strong className="text-gray-600">1</strong> = Nunca
-          </span>
-          <span>
-            <strong className="text-gray-600">3</strong> = A veces
-          </span>
-          <span>
-            <strong className="text-gray-600">5</strong> = Siempre
-          </span>
+        <div className="bg-[#e8f9f9] rounded-xl px-4 py-3 flex items-start gap-3">
+          <span className="text-lg mt-0.5">📊</span>
+          <div className="text-xs text-gray-600 leading-relaxed">
+            <strong className="text-gray-700">1 = Nunca</strong> &nbsp;·&nbsp;
+            <strong className="text-gray-700">2 = Poco</strong> &nbsp;·&nbsp;
+            <strong className="text-gray-700">3 = A veces</strong> &nbsp;·&nbsp;
+            <strong className="text-gray-700">4 = Frecuente</strong> &nbsp;·&nbsp;
+            <strong className="text-gray-700">5 = Siempre</strong>
+            <p className="mt-1 text-gray-500">Marca 1 si casi nunca pasa, 5 si pasa todo el tiempo.</p>
+          </div>
         </div>
       </div>
 
